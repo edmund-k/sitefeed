@@ -18,6 +18,7 @@ $newPage = file_get_contents($url);
 
 $res = preg_match("/<title>(.*)<\/title>/siU", $newPage, $title_matches);
 if (!$res) 
+	$res = $url; 
 $title = preg_replace('/\s+/', ' ', $title_matches[1]);
 $title = trim($title);
 
