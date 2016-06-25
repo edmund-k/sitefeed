@@ -25,13 +25,14 @@ $title = trim($title);
 if ($firstTime === true) {
     $text = 'This is the first time the page was crawled, changes will now be monitored.';
     $hasChanges = true;
-} else {
+} elseif ( strlen($newPage) > 0 ) {
     $oldPage = file_get_contents($siteCacheFilePath);
     $text = htmlDiff($oldPage, $newPage);
 
-    if ($oldPage !== $newPage)
+    //if ($oldPage !== $newPage)
+    if ( strlen($text) > 0 )
         $hasChanges = true;
-}
+} 
 
 if ($hasChanges === true) {
     file_put_contents($siteCacheFilePath, $newPage);
@@ -70,6 +71,8 @@ foreach (glob("cache/$cacheFileNameId.rssitem*.txt") as $f) {
     $item->addChild('author', 'sitefeed@domain.com (sitefeed)');
 }
 
+//header('Content-Type: text/plain');
+//echo "ätsch"; exit;
 header('Content-Type: application/rss+xml');
 echo $feed->asXML();
 
