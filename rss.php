@@ -36,7 +36,8 @@ if ($firstTime === true) {
 if ($hasChanges === true) {
     file_put_contents($siteCacheFilePath, $newPage);
 
-    $itemCacheFilePath = "cache/$cacheFileNameId.rssitem-" . base64_encode(date(DATE_RSS)) . '.txt';
+    //$itemCacheFilePath = "cache/$cacheFileNameId.rssitem-" . base64_encode(date(DATE_RSS)) . '.txt';
+    $itemCacheFilePath = "cache/$cacheFileNameId.rssitem-" . date("YmdHis") . '.txt';
     $text .= '<style>.sitefeed-ins { background-color: #aaffaa; } .sitefeed-del { background-color: #ff8888; text-decoration: line-through; }</style>';
     file_put_contents($itemCacheFilePath, $text);
 }
@@ -51,7 +52,9 @@ $imageItem->addChild('url', base_url('img/font-awesome-rss-black.png'));
 //RSS items
 foreach (glob("cache/$cacheFileNameId.rssitem*.txt") as $f) {
     $itemText = file_get_contents($f);
-    $itemDate = base64_decode(get_string_between($f, 'rssitem-', '.txt'));
+    //$itemDate = base64_decode(get_string_between($f, 'rssitem-', '.txt'));
+	$itemDateText = get_string_between($f, 'rssitem-', '.txt');
+    $itemDate = date_create_from_format("YmdHis", $itemDateText)->format(DATE_RSS);
 
     $item = $feed->channel->addChild('item');
     $item->addChild('title', "sitefeed: Change detected for $title on $itemDate");
