@@ -18,12 +18,12 @@ $newPage = file_get_contents($url);
 
 $res = preg_match("/<title>(.*)<\/title>/siU", $newPage, $title_matches);
 if (!$res) 
-	$res = $url; 
+	$title = $url; 
 $title = preg_replace('/\s+/', ' ', $title_matches[1]);
 $title = trim($title);
 
 if ($firstTime === true) {
-    $text = 'This is the first time the page was crawled, changes will now be monitored.';
+    $text = "This is the first time the page '$title' was crawled, changes will now be monitored.";
     $hasChanges = true;
 } elseif ( strlen($newPage) > 0 ) {
     $oldPage = file_get_contents($siteCacheFilePath);
