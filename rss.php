@@ -16,6 +16,11 @@ $siteCacheFilePath = "cache/$cacheFileNameId.site.txt";
 $firstTime = !file_exists($siteCacheFilePath);
 $newPage = file_get_contents($url);
 
+$res = preg_match("/<title>(.*)<\/title>/siU", $newPage, $title_matches);
+if (!$res) 
+$title = preg_replace('/\s+/', ' ', $title_matches[1]);
+$title = trim($title);
+
 if ($firstTime === true) {
     $text = 'This is the first time the page was crawled, changes will now be monitored.';
     $hasChanges = true;
@@ -37,7 +42,7 @@ if ($hasChanges === true) {
 
 $feed = new SimpleXMLElementEx('<rss version="2.0"></rss>');
 $feed->addChild('channel');
-$feed->channel->addChild('title', 'sitefeed for ' . $url);
+$feed->channel->addChild('title', 'sitefeed for ' . $title); // $url);
 $feed->channel->addChild('link', $url);
 $imageItem = $feed->channel->addChild('image');
 $imageItem->addChild('url', base_url('img/font-awesome-rss-black.png'));
@@ -48,7 +53,7 @@ foreach (glob("cache/$cacheFileNameId.rssitem*.txt") as $f) {
     $itemDate = base64_decode(get_string_between($f, 'rssitem-', '.txt'));
 
     $item = $feed->channel->addChild('item');
-    $item->addChild('title', "sitefeed: Change detected for $url");
+    $item->addChild('title', "sitefeed: Change detected for $title on $itemDate");
     $item->addChild('link', $url);
     $descriptionChild = $item->addChild('description');
     $descriptionChild->addCData($itemText);
@@ -58,3 +63,5 @@ foreach (glob("cache/$cacheFileNameId.rssitem*.txt") as $f) {
 
 header('Content-Type: application/rss+xml');
 echo $feed->asXML();
+
+?>
