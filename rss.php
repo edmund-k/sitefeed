@@ -45,9 +45,12 @@ if ($hasChanges === true) {
 $feed = new SimpleXMLElementEx('<rss version="2.0"></rss>');
 $feed->addChild('channel');
 $feed->channel->addChild('title', 'sitefeed for ' . $title); // $url);
+$feed->channel->addChild('description', 'sitefeed description');
 $feed->channel->addChild('link', $url);
 $imageItem = $feed->channel->addChild('image');
+$imageItem->addChild('title', 'sitefeed for ' . $title);
 $imageItem->addChild('url', base_url('img/font-awesome-rss-black.png'));
+$imageItem->addChild('link', $url);
 
 //RSS items
 foreach (glob("cache/$cacheFileNameId.rssitem*.txt") as $f) {
@@ -59,10 +62,12 @@ foreach (glob("cache/$cacheFileNameId.rssitem*.txt") as $f) {
     $item = $feed->channel->addChild('item');
     $item->addChild('title', "sitefeed: Change detected for $title on $itemDate");
     $item->addChild('link', $url);
+	$itemGuid = $url . '&#38;guid=' . $itemDateText;
+    $item->addChild('guid', $itemGuid);
     $descriptionChild = $item->addChild('description');
     $descriptionChild->addCData($itemText);
     $item->addChild('pubDate', $itemDate);
-    $item->addChild('author', 'sitefeed');
+    $item->addChild('author', 'sitefeed@domain.com (sitefeed)');
 }
 
 header('Content-Type: application/rss+xml');
